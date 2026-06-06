@@ -1,23 +1,34 @@
 # bean-archive-copilot
-bean-archive-copilot is an AI-assisted coffee archive that helps turn bean cards, café photos, tasting notes, and memory-trip entries into a structured, searchable system for reflection and creative post planning.
 
-`bean-archive-copilot` is a private-first tool for turning coffee bean cards, cup photos, café notes, and tasting memories into a structured, searchable archive.
+AI-assisted field notebook and archive for coffee experiences.
 
-It helps with:
+`bean-archive-copilot` helps capture coffee experiences as they happen — bean cards, cup photos, café observations, tasting notes, and travel memories — and organize them into a searchable archive.
 
-- extracting bean metadata from cards/images
-- organizing entries by sensory and experience themes
-- finding related or contrasting coffees
-- surfacing memory-trip and turning-point entries
+The project combines structured coffee logging with AI-assisted workflows to:
 
-The goal is not to replace personal interpretation, but to reduce manual friction in building a creative coffee archive.
+- extract metadata from bean cards
+- organize entries into sensory and experience themes
+- surface memorable cups and turning points
+- identify related and contrasting coffees
+- generate creative starting points for captions, room notes, and post ideas
+
+The goal is not to replace personal interpretation, but to preserve and enrich it.
 
 > AI suggests. The user decides.
+
+## Why This Exists
+
+Most coffee apps focus on tracking beans.
+
+This project focuses on capturing coffee experiences.
+
+A memorable cup can be tied to a place, a room, a city, a shift in taste, or a specific moment. `bean-archive-copilot` is designed as a field notebook first and an archive second.
 
 ## Tech Stack
 
 - Next.js
 - TypeScript
+- Tailwind CSS
 - PostgreSQL
 - Prisma
 - Supabase Storage
@@ -25,9 +36,11 @@ The goal is not to replace personal interpretation, but to reduce manual frictio
 
 ## MVP Scope
 
+- responsive web app
+- PWA-ready mobile experience
 - archive CRUD
 - image upload
-- bean-card extraction
+- bean-card metadata extraction
 - search / filter / sort
 - theme tagging
 - pairing suggestions
