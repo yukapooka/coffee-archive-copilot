@@ -18,7 +18,7 @@ What This App Does
 * preserves context around cups, places, and memories
 * organizes entries through themes, flags, and collections
 * helps surface patterns across taste, place, ritual, and creative interest
-* eventually supports AI-assisted interpretation and visual direction
+* supports creative interpretation of coffee experiences through collections, themes, and visual directions
 
 Product Philosophy
 
@@ -66,9 +66,10 @@ Milestone 3 — Interpretation Layer
 * Search / filter / sort
 * Related entry discovery
 
-Milestone 4 — Content Copilot
-* Story ideas
-* Carousel planning
+Milestone 4 — Creative Interpretation
+* Story concept development
+* Collection planning
+* Visual direction notes
 * Content experiment tracking
 
 Milestone 5 — Archive Intelligence
