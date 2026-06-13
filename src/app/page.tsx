@@ -27,7 +27,7 @@ export default async function HomePage() {
     <main className="mx-auto max-w-6xl px-6 py-10">
       <div className="mb-8 flex items-end justify-between">
         <div>
-          <p className="text-sm uppercase tracking-wide text-gray-500">
+          <p className="text-sm uppercase tracking-wide text-gray-400">
             Coffee Archive Copilot
           </p>
           <h1 className="text-4xl font-semibold">Archive</h1>
@@ -57,24 +57,70 @@ export default async function HomePage() {
                 {entry.entryNumber ? `#${entry.entryNumber}` : "Draft"}
               </p>
 
-              <h2 className="mt-2 text-xl font-medium text-gray-900">
+              <h2 className="mt-2 text-xl font-medium text-gray-800">
                 {getDisplayTitle(entry)}
               </h2>
 
               <p className="mt-1 text-sm text-gray-600">
                 {[entry.cafeName, entry.city].filter(Boolean).join(" · ")}
               </p>
+                {entry.dateTried && (
+                  <p className="mt-2 text-sm text-gray-500">
+                    {new Date(entry.dateTried).toLocaleDateString("en-US", {
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </p>
+                )}
+              <div className="mt-4 flex flex-wrap gap-2 text-xs">
+                {entry.originCountry && (
+                  <span className="rounded-full bg-gray-100 px-2 py-1 text-gray-700">
+                    {entry.originCountry}
+                  </span>
+                )}
+
+                {entry.originRegion && (
+                  <span className="rounded-full bg-gray-100 px-2 py-1 text-gray-700">
+                    {entry.originRegion}
+                  </span>
+                )}
+
+                {entry.varietal && (
+                  <span className="rounded-full bg-gray-100 px-2 py-1 text-gray-700">
+                    {entry.varietal}
+                  </span>
+                )}
+
+                {entry.process && (
+                  <span className="rounded-full bg-gray-100 px-2 py-1 text-gray-700">
+                    {entry.process}
+                  </span>
+                )}
+
+                {entry.servedStyle && (
+                  <span className="rounded-full bg-gray-100 px-2 py-1 text-gray-700">
+                    {entry.servedStyle.toLowerCase()}
+                  </span>
+                )}
+              </div>
 
               <div className="mt-4 space-y-2 text-sm text-gray-700">
+                {entry.tastingNotesRaw && (
+                  <p className="line-clamp-2">
+                    <span className="font-medium">Roaster notes:</span>{" "}
+                    {entry.tastingNotesRaw}
+                  </p>
+                )}
+
                 {entry.personalTastingNote && (
-                  <p>
+                  <p className="line-clamp-2">
                     <span className="font-medium">Note:</span>{" "}
                     {entry.personalTastingNote}
                   </p>
                 )}
 
                 {entry.whatLingered && (
-                  <p>
+                  <p className="line-clamp-2">
                     <span className="font-medium">Lingered:</span>{" "}
                     {entry.whatLingered}
                   </p>

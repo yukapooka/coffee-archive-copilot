@@ -7,27 +7,24 @@ datasource db {
 }
 
 model Entry {
-  id          String @id @default(cuid())
-  entryNumber Int?   @unique
-
-  beanName          String?
-  drinkLabel        String?
-  title             String?
-  cafeName          String?
-  roasterName       String?
-  dateTried         DateTime?
-  city              String?
-  countryWhereDrank String?
-
-  originCountry   String?
-  originRegion    String?
-  producer        String?
-  farm            String?
-  varietal        String?
-  process         String?
-  tastingNotesRaw String?
-  servedStyle     ServedStyle?
-
+  id                  String           @id @default(cuid())
+  entryNumber         Int?             @unique
+  beanName            String?
+  drinkLabel          String?
+  title               String?
+  cafeName            String?
+  roasterName         String?
+  dateTried           DateTime?
+  city                String?
+  countryWhereDrank   String?
+  originCountry       String?
+  originRegion        String?
+  producer            String?
+  farm                String?
+  varietal            String?
+  process             String?
+  tastingNotesRaw     String?
+  servedStyle         ServedStyle?
   personalTastingNote String?
   whatLingered        String?
   roomNote            String?
@@ -35,23 +32,19 @@ model Entry {
   selectedBy          String?
   curationNote        String?
   memoryNote          String?
-
-  memoryTrip    Boolean @default(false)
-  turningPoint  Boolean @default(false)
-  quietFavorite Boolean @default(false)
-  wouldRevisit  Boolean @default(false)
-
-  postStatus     PostStatus     @default(NOT_PLANNED)
-  photoReadiness PhotoReadiness @default(NO_PHOTOS)
-  sourceType     SourceType     @default(CURRENT_CUP)
-  confidence     Confidence     @default(MEDIUM)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  media         Media[]
-  entryThemes   EntryTheme[]
-  contentDrafts ContentDraft[]
+  memoryTrip          Boolean          @default(false)
+  turningPoint        Boolean          @default(false)
+  quietFavorite       Boolean          @default(false)
+  wouldRevisit        Boolean          @default(false)
+  postStatus          PostStatus       @default(NOT_PLANNED)
+  photoReadiness      PhotoReadiness   @default(NO_PHOTOS)
+  sourceType          SourceType       @default(CURRENT_CUP)
+  confidence          Confidence       @default(MEDIUM)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  contentDrafts       ContentDraft[]
+  entryThemes         EntryTheme[]
+  media               Media[]
 }
 
 model Media {
@@ -62,8 +55,7 @@ model Media {
   extractedText String?
   aiDescription String?
   createdAt     DateTime  @default(now())
-
-  entry Entry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  entry         Entry     @relation(fields: [entryId], references: [id], onDelete: Cascade)
 }
 
 model Theme {
@@ -73,7 +65,6 @@ model Theme {
   description String?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-
   entryThemes EntryTheme[]
 }
 
@@ -83,9 +74,8 @@ model EntryTheme {
   themeId    String
   source     ThemeSource @default(MANUAL)
   confidence Float?
-
-  entry Entry @relation(fields: [entryId], references: [id], onDelete: Cascade)
-  theme Theme @relation(fields: [themeId], references: [id], onDelete: Cascade)
+  entry      Entry       @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  theme      Theme       @relation(fields: [themeId], references: [id], onDelete: Cascade)
 
   @@unique([entryId, themeId])
 }
@@ -97,8 +87,7 @@ model ContentDraft {
   content     String
   modelSource DraftSource @default(MANUAL)
   createdAt   DateTime    @default(now())
-
-  entry Entry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  entry       Entry       @relation(fields: [entryId], references: [id], onDelete: Cascade)
 }
 
 enum ServedStyle {
