@@ -18,10 +18,16 @@ function getDisplayTitle(entry: {
 
 export default async function HomePage() {
   const entries = await prisma.entry.findMany({
-    orderBy: {
+
+  orderBy: [
+    {
+      dateTried: "desc",
+    },
+    {
       createdAt: "desc",
     },
-  });
+  ],
+});
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-10">
@@ -35,7 +41,7 @@ export default async function HomePage() {
 
         <Link
           href="/entries/new"
-          className="rounded bg-black px-4 py-2 text-sm text-white"
+          className="rounded bg-white px-4 py-2 text-sm text-black"
         >
           New entry
         </Link>

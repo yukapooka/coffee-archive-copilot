@@ -18,12 +18,19 @@ async function createEntry(formData: FormData) {
         ? new Date(formData.get("dateTried") as string)
         : null,
       beanName: formData.get("beanName") as string || null,
+      servedStyle:
+        ((formData.get("servedStyle") as string) || null) as
+          | "HOT"
+          | "ICED"
+          | "BOTH"
+          | null,
       process: formData.get("process") as string || null,
       varietal: formData.get("varietal") as string || null,
       originRegion: formData.get("originRegion") as string || null,
       originCountry: formData.get("originCountry") as string || null,
       cafeName: formData.get("cafeName") as string || null,
       city: formData.get("city") as string || null,
+
       tastingNotesRaw: (formData.get("tastingNotesRaw") as string) || null,
       personalTastingNote: formData.get("personalTastingNote") as string || null,
       whatLingered: formData.get("whatLingered") as string || null,
@@ -43,6 +50,16 @@ export default function NewEntryPage() {
       <form action={createEntry} className="space-y-6">
         <input name="dateTried" placeholder="Date tried" type="date"  className="w-full rounded border p-3" />
         <input name="beanName" placeholder="Bean name" className="w-full rounded border p-3" />
+        <select
+          name="servedStyle"
+          className="w-full rounded border p-3"
+          defaultValue=""
+        >
+          <option value="">Served style</option>
+          <option value="HOT">Hot</option>
+          <option value="ICED">Iced</option>
+          <option value="BOTH">Both</option>
+        </select>
         <input name="process" placeholder="Process" className="w-full rounded border p-3" />
         <input name="varietal" placeholder="Varietal" className="w-full rounded border p-3" />
         <input name="originRegion" placeholder="Region" className="w-full rounded border p-3" />

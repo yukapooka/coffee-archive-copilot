@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
@@ -48,7 +49,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-xl border bg-white p-6 shadow-sm">
+    <section className="rounded-xl border bg-white p-5 shadow-sm">
       <h2 className="mb-5 text-sm font-semibold uppercase tracking-wide text-gray-500">
         {title}
       </h2>
@@ -73,9 +74,24 @@ export default async function EntryPage({
   }
 
   return (
-    <main className="mx-auto max-w-5xl px-6 py-10">
+    <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
       <div className="space-y-8">
-        <header className="rounded-xl border bg-white p-6 shadow-sm">
+        <header className="rounded-xl border bg-white p-5 shadow-sm">
+          <div className="mt-6 flex gap-3">
+            <Link
+              href="/"
+              className="rounded bg-gray-400 px-4 py-2 text-sm text-white hover:bg-gray-500"
+            >
+              Back to Archive
+            </Link>
+
+            <Link
+              href="/entries/new"
+              className="rounded bg-black px-4 py-2 text-sm text-grey"
+            >
+              New Entry
+            </Link>
+          </div>
           <p className="text-xs uppercase tracking-wide text-gray-400">
             {entry.entryNumber ? `#${entry.entryNumber}` : "Draft"}
           </p>
