@@ -16,9 +16,57 @@ function getDisplayTitle(entry: {
   return entry.beanName || entry.title || entry.drinkLabel || "Untitled entry";
 }
 
-export default async function HomePage() {
-  const entries = await prisma.entry.findMany({
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    q?: string;
+    originCountry?: string;
+    process?: string;
+  }>;
+}) {
+  const params = await searchParams;
 
+  const q = params.q || "";
+  const originCountry = params.originCountry || "";
+  const process = params.process || "";
+  const entries = await prisma.entry.findMany({
+  where: {
+    AND: [
+      q
+        ? {
+            OR: [
+              { beanName: { contains: q, mode: "insensitive" } },
+              { cafeName: { contains: q, mode: "insensitive" } },
+              { roasterName: { contains: q, mode: "insensitive" } },
+              { originCountry: { contains: q, mode: "insensitive" } },
+              { originRegion: { contains: q, mode: "insensitive" } },
+              { varietal: { contains: q, mode: "insensitive" } },
+              { process: { contains: q, mode: "insensitive" } },
+              { tastingNotesRaw: { contains: q, mode: "insensitive" } },
+              { personalTastingNote: { contains: q, mode: "insensitive" } },
+              { whatLingered: { contains: q, mode: "insensitive" } },
+            ],
+          }
+        : {},
+      originCountry
+        ? {
+            originCountry: {
+              contains: originCountry,
+              mode: "insensitive",
+            },
+          }
+        : {},
+      process
+        ? {
+            process: {
+              contains: process,
+              mode: "insensitive",
+            },
+          }
+        : {},
+    ],
+  },
   orderBy: [
     {
       dateTried: "desc",
@@ -46,6 +94,46 @@ export default async function HomePage() {
           New entry
         </Link>
       </div>
+
+
+    <form className="mb-8 grid gap-3 rounded-xl border bg-white p-4 shadow-sm sm:grid-cols-4">
+      <input
+        name="q"
+        defaultValue={q}
+        placeholder="Search archive"
+        className="rounded border border-gray-400 p-3 text-gray-900 placeholder:text-gray-500 sm:col-span-2"
+      />
+
+      <input
+        name="originCountry"
+        defaultValue={originCountry}
+        placeholder="Origin country"
+        className="rounded border border-gray-400 p-3 text-gray-900 placeholder:text-gray-500"
+      />
+
+      <input
+        name="process"
+        defaultValue={process}
+        placeholder="Process"
+        className="rounded border border-gray-400 p-3 text-gray-900 placeholder:text-gray-500"
+      />
+
+      <div className="flex gap-3 sm:col-span-4">
+        <button
+          type="submit"
+          className="rounded bg-black px-4 py-2 text-sm text-white"
+        >
+          Search
+        </button>
+
+        <Link
+          href="/"
+          className="rounded bg-gray-700 px-4 py-2 text-sm text-white hover:bg-gray-800"
+        >
+          Clear
+        </Link>
+      </div>
+    </form>
 
       {entries.length === 0 ? (
         <div className="rounded border border-dashed p-10 text-center text-gray-500">
