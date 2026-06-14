@@ -7,8 +7,8 @@ datasource db {
 }
 
 model Entry {
-  id                  String           @id @default(cuid())
-  entryNumber         Int?             @unique
+  id                  String            @id @default(cuid())
+  entryNumber         Int?              @unique
   beanName            String?
   drinkLabel          String?
   title               String?
@@ -32,19 +32,20 @@ model Entry {
   selectedBy          String?
   curationNote        String?
   memoryNote          String?
-  memoryTrip          Boolean          @default(false)
-  turningPoint        Boolean          @default(false)
-  quietFavorite       Boolean          @default(false)
-  wouldRevisit        Boolean          @default(false)
-  postStatus          PostStatus       @default(NOT_PLANNED)
-  photoReadiness      PhotoReadiness   @default(NO_PHOTOS)
-  sourceType          SourceType       @default(CURRENT_CUP)
-  confidence          Confidence       @default(MEDIUM)
-  createdAt           DateTime         @default(now())
-  updatedAt           DateTime         @updatedAt
-  contentDrafts       ContentDraft[]
-  entryThemes         EntryTheme[]
+  memoryTrip          Boolean           @default(false)
+  turningPoint        Boolean           @default(false)
+  quietFavorite       Boolean           @default(false)
+  wouldRevisit        Boolean           @default(false)
+  postStatus          PostStatus        @default(NOT_PLANNED)
+  photoReadiness      PhotoReadiness    @default(NO_PHOTOS)
+  sourceType          SourceType        @default(CURRENT_CUP)
+  confidence          Confidence        @default(MEDIUM)
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
   media               Media[]
+  entryThemes         EntryTheme[]
+  contentDrafts       ContentDraft[]
+  entryCollections    EntryCollection[]
 }
 
 model Media {
@@ -88,6 +89,27 @@ model ContentDraft {
   modelSource DraftSource @default(MANUAL)
   createdAt   DateTime    @default(now())
   entry       Entry       @relation(fields: [entryId], references: [id], onDelete: Cascade)
+}
+
+model Collection {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  entryCollections EntryCollection[]
+}
+
+model EntryCollection {
+  id           String @id @default(cuid())
+  entryId      String
+  collectionId String
+
+  entry      Entry      @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  @@unique([entryId, collectionId])
 }
 
 enum ServedStyle {

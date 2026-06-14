@@ -66,8 +66,15 @@ export default async function EntryPage({
   const { id } = await params;
 
   const entry = await prisma.entry.findUnique({
-    where: { id },
-  });
+  where: { id },
+  include: {
+    entryCollections: {
+      include: {
+        collection: true,
+      },
+    },
+  },
+});
 
   if (!entry) {
     notFound();
@@ -76,13 +83,20 @@ export default async function EntryPage({
   return (
     <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
       <div className="space-y-8">
-        <header className="rounded-xl border bg-white p-5 shadow-sm">
-          <div className="mt-6 flex gap-3">
+        <header className="rounded-xl border bg-white px-6 pb-6 pt-5 shadow-sm">
+          <div className="mb-8 flex gap-3">
             <Link
               href="/"
               className="rounded bg-gray-400 px-4 py-2 text-sm text-white hover:bg-gray-500"
             >
               Back to Archive
+            </Link>
+
+            <Link
+              href={`/entries/${entry.id}/edit`}
+              className="rounded bg-gray-700 px-4 py-2 text-sm text-white hover:bg-gray-800"
+            >
+              Edit Entry
             </Link>
 
             <Link
@@ -92,12 +106,6 @@ export default async function EntryPage({
               New Entry
             </Link>
             
-            <Link
-              href={`/entries/${entry.id}/edit`}
-              className="rounded bg-gray-700 px-4 py-2 text-sm text-white hover:bg-gray-800"
-            >
-              Edit Entry
-            </Link>
           </div>
           <p className="text-xs uppercase tracking-wide text-gray-400">
             {entry.entryNumber ? `#${entry.entryNumber}` : "Draft"}
@@ -208,6 +216,29 @@ export default async function EntryPage({
             </div>
           </div>
         </Section>
+
+        <section className="rounded-xl border bg-white p-5 shadow-sm">
+          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-500">
+            Collections
+          </h2>
+
+          <div className="flex flex-wrap gap-2">
+            {entry.entryCollections.length === 0 ? (
+              <p className="text-sm text-gray-500">
+                Not assigned to any collections yet.
+              </p>
+            ) : (
+              entry.entryCollections.map((item) => (
+                <span
+                  key={item.id}
+                  className="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-800"
+                >
+                  {item.collection.name}
+                </span>
+              ))
+            )}
+          </div>
+        </section>
 
         <Section title="Workflow">
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
