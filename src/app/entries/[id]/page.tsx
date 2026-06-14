@@ -91,6 +91,13 @@ export default async function EntryPage({
             >
               New Entry
             </Link>
+            
+            <Link
+              href={`/entries/${entry.id}/edit`}
+              className="rounded bg-gray-700 px-4 py-2 text-sm text-white hover:bg-gray-800"
+            >
+              Edit Entry
+            </Link>
           </div>
           <p className="text-xs uppercase tracking-wide text-gray-400">
             {entry.entryNumber ? `#${entry.entryNumber}` : "Draft"}

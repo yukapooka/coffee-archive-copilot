@@ -59,10 +59,6 @@ export default async function HomePage() {
               href={`/entries/${entry.id}`}
               className="rounded-xl border bg-white p-5 shadow-sm transition hover:shadow-md"
             >
-              <p className="text-xs uppercase tracking-wide text-gray-500">
-                {entry.entryNumber ? `#${entry.entryNumber}` : "Draft"}
-              </p>
-
               <h2 className="mt-2 text-xl font-medium text-gray-800">
                 {getDisplayTitle(entry)}
               </h2>
