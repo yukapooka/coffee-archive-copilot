@@ -23,13 +23,19 @@ export default async function HomePage({
     q?: string;
     originCountry?: string;
     process?: string;
+    collectionId?: string;
   }>;
 }) {
   const params = await searchParams;
-
   const q = params.q || "";
   const originCountry = params.originCountry || "";
   const process = params.process || "";
+  const collectionId = params.collectionId || "";
+  const collections = await prisma.collection.findMany({
+    orderBy: {
+      name: "asc",
+    },
+  });
   const entries = await prisma.entry.findMany({
   where: {
     AND: [
@@ -65,6 +71,15 @@ export default async function HomePage({
             },
           }
         : {},
+      collectionId
+        ? {
+            entryCollections: {
+              some: {
+                collectionId,
+              },
+            },
+          }
+        : {},
     ],
   },
   orderBy: [
@@ -96,7 +111,7 @@ export default async function HomePage({
       </div>
 
 
-    <form className="mb-8 grid gap-3 rounded-xl border bg-white p-4 shadow-sm sm:grid-cols-4">
+    <form className="mb-8 grid gap-3 rounded-xl border bg-white p-4 shadow-sm sm:grid-cols-5">
       <input
         name="q"
         defaultValue={q}
@@ -117,6 +132,19 @@ export default async function HomePage({
         placeholder="Process"
         className="rounded border border-gray-400 p-3 text-gray-900 placeholder:text-gray-500"
       />
+
+      <select
+        name="collectionId"
+        defaultValue={collectionId}
+        className="rounded border border-gray-400 p-3 text-gray-500"
+      >
+        <option value="">All collections</option>
+        {collections.map((collection) => (
+          <option key={collection.id} value={collection.id}>
+            {collection.name}
+          </option>
+        ))}
+      </select>
 
       <div className="flex gap-3 sm:col-span-4">
         <button

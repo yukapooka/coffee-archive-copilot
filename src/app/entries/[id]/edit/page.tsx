@@ -34,7 +34,6 @@ async function updateEntry(id: string, formData: FormData) {
       dateTried: formData.get("dateTried")
         ? new Date(formData.get("dateTried") as string)
         : null,
-
       originCountry: (formData.get("originCountry") as string) || null,
       originRegion: (formData.get("originRegion") as string) || null,
       producer: (formData.get("producer") as string) || null,
@@ -47,18 +46,14 @@ async function updateEntry(id: string, formData: FormData) {
           | "ICED"
           | "BOTH"
           | null,
-
       tastingNotesRaw:
         (formData.get("tastingNotesRaw") as string) || null,
-
       personalTastingNote:
         (formData.get("personalTastingNote") as string) || null,
       whatLingered: (formData.get("whatLingered") as string) || null,
       roomNote: (formData.get("roomNote") as string) || null,
       memoryNote: (formData.get("memoryNote") as string) || null,
-
       curationNote: (formData.get("curationNote") as string) || null,
-
       memoryTrip: formData.get("memoryTrip") === "on",
       turningPoint: formData.get("turningPoint") === "on",
       quietFavorite: formData.get("quietFavorite") === "on",
@@ -66,8 +61,26 @@ async function updateEntry(id: string, formData: FormData) {
     },
   });
 
-  redirect(`/entries/${id}`);
-}
+    const selectedCollectionIds =
+    formData.getAll("collectionIds") as string[];
+
+    await prisma.entryCollection.deleteMany({
+        where: {
+        entryId: id,
+        },
+    });
+
+    if (selectedCollectionIds.length > 0) {
+        await prisma.entryCollection.createMany({
+        data: selectedCollectionIds.map((collectionId) => ({
+            entryId: id,
+            collectionId,
+        })),
+        skipDuplicates: true,
+        });
+    }
+    redirect(`/entries/${id}`);
+    }
 
 export default async function EditEntryPage({
   params,
@@ -75,10 +88,19 @@ export default async function EditEntryPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-
+  
   const entry = await prisma.entry.findUnique({
     where: { id },
-  });
+    include: {
+        entryCollections: true,
+    },
+    });
+
+    const collections = await prisma.collection.findMany({
+    orderBy: {
+        name: "asc",
+    },
+    });
 
   if (!entry) {
     notFound();
@@ -266,6 +288,36 @@ export default async function EditEntryPage({
               className="w-full rounded border border-gray-400 p-3 text-gray-900 placeholder:text-gray-600"
             />
           </div>
+        </section>
+
+        <section className="rounded-xl border bg-white p-5 shadow-sm">
+            <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-500">
+                Collections
+            </h2>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+                {collections.map((collection) => {
+                const isChecked = entry.entryCollections.some(
+                    (item) => item.collectionId === collection.id
+                );
+
+                return (
+                    <label
+                    key={collection.id}
+                    className="flex items-center gap-2 text-gray-800"
+                    >
+                    <input
+                        type="checkbox"
+                        name="collectionIds"
+                        value={collection.id}
+                        defaultChecked={isChecked}
+                        className="h-4 w-4 accent-black"
+                    />
+                    <span>{collection.name}</span>
+                    </label>
+                );
+                })}
+            </div>
         </section>
 
         <section className="rounded-xl border bg-white p-5 shadow-sm">

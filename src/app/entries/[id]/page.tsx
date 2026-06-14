@@ -66,15 +66,21 @@ export default async function EntryPage({
   const { id } = await params;
 
   const entry = await prisma.entry.findUnique({
-  where: { id },
-  include: {
-    entryCollections: {
-      include: {
-        collection: true,
+    where: { id },
+    include: {
+      entryCollections: {
+        include: {
+          collection: true,
+        },
       },
     },
-  },
-});
+  });
+
+  const collections = await prisma.collection.findMany({
+    orderBy: {
+      name: "asc",
+    },
+  });
 
   if (!entry) {
     notFound();
