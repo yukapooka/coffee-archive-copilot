@@ -22,12 +22,32 @@ const collections = [
     description: "Coffees associated with rainy weather, darker moods, or slower afternoons.",
   },
   {
+    name: "Sunny Afternoon Coffees",
+    description: "Coffees associated with sweltering hot weather or very humid afternoons.",
+  },
+  {
     name: "Tokyo Cups",
     description: "Coffee entries from Tokyo.",
   },
   {
     name: "Hong Kong Cups",
     description: "Coffee entries from Hong Kong.",
+  },
+  {
+    name: "Taipei Cups",
+    description: "Coffee entries from Taipei.",
+  },
+  {
+    name: "Taichung Cups",
+    description: "Coffee entries from Taichung.",
+  },
+  {
+    name: "Seoul Cups",
+    description: "Coffee entries from Seoul.",
+  },
+  {
+    name: "Breakfast Cups",
+    description: "Home brewed coffees for breakfast.",
   },
 ];
 

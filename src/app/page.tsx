@@ -90,6 +90,13 @@ export default async function HomePage({
       createdAt: "desc",
     },
   ],
+  include: {
+    entryCollections: {
+      include: {
+        collection: true,
+      },
+    },
+  },
 });
 
   return (
@@ -189,6 +196,18 @@ export default async function HomePage({
                       year: "numeric",
                     })}
                   </p>
+                )}
+                {entry.entryCollections.length > 0 && (
+                  <div className="mt-4 flex flex-wrap gap-2 text-xs">
+                    {entry.entryCollections.map((item) => (
+                      <span
+                        key={item.id}
+                        className="rounded-full bg-gray-400 px-2 py-1 text-white"
+                      >
+                        {item.collection.name}
+                      </span>
+                    ))}
+                  </div>
                 )}
               <div className="mt-4 flex flex-wrap gap-2 text-xs">
                 {entry.originCountry && (
