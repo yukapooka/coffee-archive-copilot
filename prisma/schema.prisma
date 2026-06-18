@@ -200,6 +200,7 @@ model EntryInterpretation {
   // Internal state before coffee
   moodBefore   MoodState?
   energyBefore EnergyLevel?
+  energyAfter  EnergyLevel?
 
   // Outcome / fit
   momentFitRating  Int?

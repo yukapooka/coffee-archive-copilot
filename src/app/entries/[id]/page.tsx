@@ -26,6 +26,16 @@ function formatDate(date: Date | null) {
   }).format(date);
 }
 
+function formatEnumLabel(value: string | null | undefined) {
+  if (!value) return null;
+
+  return value
+    .toLowerCase()
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
 function DetailRow({
   label,
   value,
@@ -68,17 +78,12 @@ export default async function EntryPage({
   const entry = await prisma.entry.findUnique({
     where: { id },
     include: {
+      interpretation: true,
       entryCollections: {
         include: {
           collection: true,
         },
       },
-    },
-  });
-
-  const collections = await prisma.collection.findMany({
-    orderBy: {
-      name: "asc",
     },
   });
 
@@ -171,16 +176,50 @@ export default async function EntryPage({
           <div className="space-y-5">
             <DetailRow label="Room Note" value={entry.roomNote} />
             <DetailRow
-              label="Selection Source"
-              value={entry.selectionSource?.toLowerCase()}
+              label="Occasion"
+              value={formatEnumLabel(entry.interpretation?.occasion)}
             />
-            <DetailRow label="Curation Note" value={entry.curationNote} />
+            <DetailRow
+              label="Selection Source"
+              value={formatEnumLabel(entry.interpretation?.selectionSource)}
+            />
+            <DetailRow
+              label="Selection Intent"
+              value={formatEnumLabel(entry.interpretation?.selectionIntent)}
+            />
           </div>
         </Section>
 
         <Section title="Reflect">
           <div className="space-y-5">
-            <DetailRow label="Memory Note" value={entry.memoryNote} />
+            <DetailRow
+              label="Mood Before"
+              value={formatEnumLabel(entry.interpretation?.moodBefore)}
+            />
+            <DetailRow
+              label="Energy Before"
+              value={formatEnumLabel(entry.interpretation?.energyBefore)}
+            />
+            <DetailRow
+              label="Energy After"
+              value={formatEnumLabel(entry.interpretation?.energyAfter)}
+            />
+            <DetailRow
+              label="Moment Fit"
+              value={
+                entry.interpretation?.momentFitRating != null
+                  ? `${entry.interpretation.momentFitRating}/5`
+                  : null
+              }
+            />
+            <DetailRow
+              label="Repeat Likelihood"
+              value={formatEnumLabel(entry.interpretation?.repeatLikelihood)}
+            />
+            <DetailRow
+              label="Interpretation Note"
+              value={entry.interpretation?.interpretationNote}
+            />
 
             <div>
               <p className="text-xs uppercase tracking-wide text-gray-400">

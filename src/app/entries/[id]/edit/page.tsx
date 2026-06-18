@@ -90,6 +90,7 @@ async function updateEntry(id: string, formData: FormData) {
       selectionIntent: nullableEnum(formData.get("selectionIntent")),
       moodBefore: nullableEnum(formData.get("moodBefore")),
       energyBefore: nullableEnum(formData.get("energyBefore")),
+      energyAfter: nullableEnum(formData.get("energyAfter")),
       momentFitRating: nullableInt(formData.get("momentFitRating")),
       repeatLikelihood: nullableEnum(formData.get("repeatLikelihood")),
       interpretationNote: nullableString(formData.get("interpretationNote")),
@@ -101,6 +102,7 @@ async function updateEntry(id: string, formData: FormData) {
       selectionIntent: nullableEnum(formData.get("selectionIntent")),
       moodBefore: nullableEnum(formData.get("moodBefore")),
       energyBefore: nullableEnum(formData.get("energyBefore")),
+      energyAfter: nullableEnum(formData.get("energyAfter")),
       momentFitRating: nullableInt(formData.get("momentFitRating")),
       repeatLikelihood: nullableEnum(formData.get("repeatLikelihood")),
       interpretationNote: nullableString(formData.get("interpretationNote")),
@@ -487,6 +489,23 @@ export default async function EditEntryPage({
               <select
                 name="energyBefore"
                 defaultValue={entry.interpretation?.energyBefore ?? ""}
+                className="w-full rounded border border-gray-400 p-3 text-gray-900"
+              >
+                <option value=""></option>
+                <option value="LOW">Low energy</option>
+                <option value="MEDIUM">Medium energy</option>
+                <option value="HIGH">High energy</option>
+                <option value="UNKNOWN">Unknown</option>
+              </select>
+            </label>
+
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-gray-700">
+                What was your energy level after the cup?
+              </span>
+              <select
+                name="energyAfter"
+                defaultValue={entry.interpretation?.energyAfter ?? ""}
                 className="w-full rounded border border-gray-400 p-3 text-gray-900"
               >
                 <option value=""></option>
