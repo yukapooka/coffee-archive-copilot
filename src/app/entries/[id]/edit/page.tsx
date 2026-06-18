@@ -18,6 +18,25 @@ function dateValue(date: Date | null) {
   return date.toISOString().split("T")[0];
 }
 
+function nullableString(value: FormDataEntryValue | null) {
+  const stringValue = value?.toString().trim();
+  return stringValue ? stringValue : null;
+}
+
+function nullableEnum<T extends string>(value: FormDataEntryValue | null) {
+  const stringValue = value?.toString().trim();
+  return stringValue ? (stringValue as T) : null;
+}
+
+function nullableInt(value: FormDataEntryValue | null) {
+  const stringValue = value?.toString().trim();
+
+  if (!stringValue) return null;
+
+  const parsed = Number.parseInt(stringValue, 10);
+  return Number.isNaN(parsed) ? null : parsed;
+}
+
 async function updateEntry(id: string, formData: FormData) {
   "use server";
 
@@ -52,12 +71,41 @@ async function updateEntry(id: string, formData: FormData) {
         (formData.get("personalTastingNote") as string) || null,
       whatLingered: (formData.get("whatLingered") as string) || null,
       roomNote: (formData.get("roomNote") as string) || null,
-      memoryNote: (formData.get("memoryNote") as string) || null,
+      memoryNote: (formData.get("MemoryNote") as string) || null,
       curationNote: (formData.get("curationNote") as string) || null,
       memoryTrip: formData.get("memoryTrip") === "on",
       turningPoint: formData.get("turningPoint") === "on",
       quietFavorite: formData.get("quietFavorite") === "on",
       wouldRevisit: formData.get("wouldRevisit") === "on",
+    },
+  });
+
+  await prisma.entryInterpretation.upsert({
+    where: {
+      entryId: id,
+    },
+    update: {
+      occasion: nullableEnum(formData.get("occasion")),
+      selectionSource: nullableEnum(formData.get("selectionSource")),
+      selectionIntent: nullableEnum(formData.get("selectionIntent")),
+      moodBefore: nullableEnum(formData.get("moodBefore")),
+      energyBefore: nullableEnum(formData.get("energyBefore")),
+      momentFitRating: nullableInt(formData.get("momentFitRating")),
+      repeatLikelihood: nullableEnum(formData.get("repeatLikelihood")),
+      interpretationNote: nullableString(formData.get("interpretationNote")),
+    },
+    create: {
+      entryId: id,
+      occasion: nullableEnum(formData.get("occasion")),
+      selectionSource: nullableEnum(formData.get("selectionSource")),
+      selectionIntent: nullableEnum(formData.get("selectionIntent")),
+      moodBefore: nullableEnum(formData.get("moodBefore")),
+      energyBefore: nullableEnum(formData.get("energyBefore")),
+      momentFitRating: nullableInt(formData.get("momentFitRating")),
+      repeatLikelihood: nullableEnum(formData.get("repeatLikelihood")),
+      interpretationNote: nullableString(formData.get("interpretationNote")),
+      memoryNote: nullableString(formData.get("interpretationMemoryNote")),
+      lingeringNote: nullableString(formData.get("lingeringNote")),
     },
   });
 
@@ -82,6 +130,7 @@ async function updateEntry(id: string, formData: FormData) {
     redirect(`/entries/${id}`);
     }
 
+
 export default async function EditEntryPage({
   params,
 }: {
@@ -92,15 +141,20 @@ export default async function EditEntryPage({
   const entry = await prisma.entry.findUnique({
     where: { id },
     include: {
-        entryCollections: true,
+      interpretation: true,
+      entryCollections: {
+        include: {
+          collection: true,
+        },
+      },
     },
-    });
+  });
 
-    const collections = await prisma.collection.findMany({
+  const collections = await prisma.collection.findMany({
     orderBy: {
-        name: "asc",
+      name: "asc",
     },
-    });
+  });
 
   if (!entry) {
     notFound();
@@ -282,7 +336,7 @@ export default async function EditEntryPage({
             />
 
             <textarea
-              name="memoryNote"
+              name="interpretationMemoryNote"
               defaultValue={textValue(entry.memoryNote)}
               placeholder="Memory note"
               className="w-full rounded border border-gray-400 p-3 text-gray-900 placeholder:text-gray-600"
@@ -319,18 +373,181 @@ export default async function EditEntryPage({
                 })}
             </div>
         </section>
+        
 
         <section className="rounded-xl border bg-white p-5 shadow-sm">
           <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-500">
             Interpretation
           </h2>
 
-          <textarea
-            name="curationNote"
-            defaultValue={textValue(entry.curationNote)}
-            placeholder="Curation note / special note"
-            className="w-full rounded border border-gray-400 p-3 text-gray-900 placeholder:text-gray-600"
-          />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-gray-700">
+                What kind of moment was this?
+              </span>
+              <select
+                name="occasion"
+                defaultValue={entry.interpretation?.occasion ?? ""}
+                className="w-full rounded border border-gray-400 p-3 text-gray-900"
+              >
+                <option value=""></option>
+                <option value="JOURNALING">Journaling</option>
+                <option value="READING">Reading</option>
+                <option value="WORK_FOCUS">Work focus</option>
+                <option value="CREATIVE_WORK">Creative work</option>
+                <option value="SOCIAL_CATCHUP">Social catch-up</option>
+                <option value="SOLO_WANDERING">Solo wandering</option>
+                <option value="TRAVEL">Travel</option>
+                <option value="HOME_BREWING">Home brewing</option>
+                <option value="ROUTINE_CUP">Routine cup</option>
+                <option value="OTHER">Other</option>
+                <option value="UNKNOWN">Unknown</option>
+              </select>
+            </label>
+
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-gray-700">
+                Who or what led you to this coffee?
+              </span>
+              <select
+                name="selectionSource"
+                defaultValue={entry.interpretation?.selectionSource ?? ""}
+                className="w-full rounded border border-gray-400 p-3 text-gray-900"
+              >
+                <option value=""></option>
+                <option value="SELF_SELECTED">Self selected</option>
+                <option value="BARISTA_RECOMMENDED">Barista recommended</option>
+                <option value="FRIEND_RECOMMENDED">Friend recommended</option>
+                <option value="CAFE_SIGNATURE">Café signature</option>
+                <option value="CAFE_FEATURED">Café featured</option>
+                <option value="ROASTER_FEATURE">Roaster feature</option>
+                <option value="SOCIAL_MEDIA">Social media</option>
+                <option value="MENU_DESCRIPTION">Menu description</option>
+                <option value="RETURNING_FAVORITE">Returning favorite</option>
+                <option value="RANDOM_CHOICE">Random choice</option>
+                <option value="GIFT">Gift</option>
+                <option value="OTHER">Other</option>
+                <option value="UNKNOWN">Unknown</option>
+              </select>
+            </label>
+
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-gray-700">
+                What were you looking for?
+              </span>
+              <select
+                name="selectionIntent"
+                defaultValue={entry.interpretation?.selectionIntent ?? ""}
+                className="w-full rounded border border-gray-400 p-3 text-gray-900"
+              >
+                <option value=""></option>
+                <option value="CURIOSITY">Curiosity</option>
+                <option value="COMFORT">Comfort</option>
+                <option value="CLARITY">Clarity</option>
+                <option value="ENERGY_RESET">Energy reset</option>
+                <option value="TREAT">Treat</option>
+                <option value="EXPERIMENT">Experiment</option>
+                <option value="MEMORY">Memory</option>
+                <option value="SOCIAL_PAIRING">Social pairing</option>
+                <option value="ROUTINE">Routine</option>
+                <option value="NOVELTY">Novelty</option>
+                <option value="OTHER">Other</option>
+                <option value="UNKNOWN">Unknown</option>
+              </select>
+            </label>
+
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-gray-700">
+                How were you feeling before the cup?
+              </span>
+              <select
+                name="moodBefore"
+                defaultValue={entry.interpretation?.moodBefore ?? ""}
+                className="w-full rounded border border-gray-400 p-3 text-gray-900"
+              >
+                <option value=""></option>
+                <option value="CURIOUS">Curious</option>
+                <option value="FOCUSED">Focused</option>
+                <option value="REFLECTIVE">Reflective</option>
+                <option value="CALM">Calm</option>
+                <option value="TIRED">Tired</option>
+                <option value="RESTLESS">Restless</option>
+                <option value="COMFORT_SEEKING">Comfort seeking</option>
+                <option value="SOCIAL">Social</option>
+                <option value="NEUTRAL">Neutral</option>
+                <option value="OTHER">Other</option>
+                <option value="UNKNOWN">Unknown</option>
+              </select>
+            </label>
+
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-gray-700">
+                What was your energy level?
+              </span>
+              <select
+                name="energyBefore"
+                defaultValue={entry.interpretation?.energyBefore ?? ""}
+                className="w-full rounded border border-gray-400 p-3 text-gray-900"
+              >
+                <option value=""></option>
+                <option value="LOW">Low energy</option>
+                <option value="MEDIUM">Medium energy</option>
+                <option value="HIGH">High energy</option>
+                <option value="UNKNOWN">Unknown</option>
+              </select>
+            </label>
+
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-gray-700">
+                How well did this coffee fit the moment?
+              </span>
+              <select
+                name="momentFitRating"
+                defaultValue={entry.interpretation?.momentFitRating?.toString() ?? ""}
+                className="w-full rounded border border-gray-400 p-3 text-gray-900"
+              >
+                <option value=""></option>
+                <option value="1">1 — Did not fit</option>
+                <option value="2">2 — Somewhat mismatched</option>
+                <option value="3">3 — Fine / neutral</option>
+                <option value="4">4 — Fit well</option>
+                <option value="5">5 — Perfect for the moment</option>
+              </select>
+            </label>
+
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-gray-700">
+                Would you return to this coffee?
+              </span>
+              <select
+                name="repeatLikelihood"
+                defaultValue={entry.interpretation?.repeatLikelihood ?? ""}
+                className="w-full rounded border border-gray-400 p-3 text-gray-900"
+              >
+                <option value=""></option>
+                <option value="YES">Would return</option>
+                <option value="MAYBE">Maybe</option>
+                <option value="ONLY_IN_SAME_CONTEXT">Only in the same context</option>
+                <option value="NO">Would not return</option>
+                <option value="UNKNOWN">Unknown</option>
+              </select>
+            </label>
+          </div>
+
+          <div className="mt-4 space-y-4">
+            <textarea
+              name="interpretationNote"
+              defaultValue={entry.interpretation?.interpretationNote ?? ""}
+              placeholder="What might this experience suggest?"
+              className="w-full rounded border border-gray-400 p-3 text-gray-900 placeholder:text-gray-600"
+            />
+
+          </div>
+          
+        <div className="mt-5">
+          <h3 className="mb-3 text-sm font-medium text-gray-700">
+            Entry markers
+          </h3>
 
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
             <label className="flex items-center gap-2 text-gray-800">
@@ -369,6 +586,7 @@ export default async function EditEntryPage({
               <span>Would Revisit</span>
             </label>
           </div>
+        </div>
         </section>
 
         <div className="flex gap-3">

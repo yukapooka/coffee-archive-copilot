@@ -7,8 +7,8 @@ datasource db {
 }
 
 model Entry {
-  id                  String            @id @default(cuid())
-  entryNumber         Int?              @unique
+  id                  String               @id @default(cuid())
+  entryNumber         Int?                 @unique
   beanName            String?
   drinkLabel          String?
   title               String?
@@ -32,20 +32,21 @@ model Entry {
   selectedBy          String?
   curationNote        String?
   memoryNote          String?
-  memoryTrip          Boolean           @default(false)
-  turningPoint        Boolean           @default(false)
-  quietFavorite       Boolean           @default(false)
-  wouldRevisit        Boolean           @default(false)
-  postStatus          PostStatus        @default(NOT_PLANNED)
-  photoReadiness      PhotoReadiness    @default(NO_PHOTOS)
-  sourceType          SourceType        @default(CURRENT_CUP)
-  confidence          Confidence        @default(MEDIUM)
-  createdAt           DateTime          @default(now())
-  updatedAt           DateTime          @updatedAt
+  memoryTrip          Boolean              @default(false)
+  turningPoint        Boolean              @default(false)
+  quietFavorite       Boolean              @default(false)
+  wouldRevisit        Boolean              @default(false)
+  postStatus          PostStatus           @default(NOT_PLANNED)
+  photoReadiness      PhotoReadiness       @default(NO_PHOTOS)
+  sourceType          SourceType           @default(CURRENT_CUP)
+  confidence          Confidence           @default(MEDIUM)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
   media               Media[]
   entryThemes         EntryTheme[]
   contentDrafts       ContentDraft[]
   entryCollections    EntryCollection[]
+  interpretation      EntryInterpretation?
 }
 
 model Media {
@@ -118,16 +119,6 @@ enum ServedStyle {
   BOTH
 }
 
-enum SelectionSource {
-  SELF_SELECTED
-  BARISTA_RECOMMENDED
-  CAFE_FEATURED
-  TASTING_FLIGHT
-  SUBSCRIPTION_SET
-  FRIEND_RECOMMENDED
-  UNKNOWN
-}
-
 enum PostStatus {
   NOT_PLANNED
   STORY_ONLY
@@ -192,4 +183,110 @@ enum DraftType {
 enum DraftSource {
   MANUAL
   AI
+}
+
+model EntryInterpretation {
+  id      String @id @default(cuid())
+  entryId String @unique
+  entry   Entry  @relation(fields: [entryId], references: [id], onDelete: Cascade)
+
+  // Context
+  occasion Occasion?
+
+  // Choice logic
+  selectionSource SelectionSource?
+  selectionIntent SelectionIntent?
+
+  // Internal state before coffee
+  moodBefore   MoodState?
+  energyBefore EnergyLevel?
+
+  // Outcome / fit
+  momentFitRating  Int?
+  repeatLikelihood RepeatLikelihood?
+
+  // Reflective interpretation
+  interpretationNote String?
+  memoryNote         String?
+  lingeringNote      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Occasion {
+  JOURNALING
+  READING
+  WORK_FOCUS
+  CREATIVE_WORK
+  SOCIAL_CATCHUP
+  SOLO_WANDERING
+  TRAVEL
+  MEMORY_VISIT
+  HOME_BREWING
+  ROUTINE_CUP
+  OTHER
+  UNKNOWN
+}
+
+enum SelectionSource {
+  SELF_SELECTED
+  BARISTA_RECOMMENDED
+  FRIEND_RECOMMENDED
+  CAFE_SIGNATURE
+  CAFE_FEATURED
+  TASTING_FLIGHT
+  ROASTER_FEATURE
+  SOCIAL_MEDIA
+  MENU_DESCRIPTION
+  SUBSCRIPTION_SET
+  RETURNING_FAVORITE
+  RANDOM_CHOICE
+  GIFT
+  OTHER
+  UNKNOWN
+}
+
+enum SelectionIntent {
+  CURIOSITY
+  COMFORT
+  CLARITY
+  ENERGY_RESET
+  TREAT
+  EXPERIMENT
+  MEMORY
+  SOCIAL_PAIRING
+  ROUTINE
+  NOVELTY
+  OTHER
+  UNKNOWN
+}
+
+enum MoodState {
+  CURIOUS
+  FOCUSED
+  REFLECTIVE
+  CALM
+  TIRED
+  RESTLESS
+  COMFORT_SEEKING
+  SOCIAL
+  NEUTRAL
+  OTHER
+  UNKNOWN
+}
+
+enum EnergyLevel {
+  LOW
+  MEDIUM
+  HIGH
+  UNKNOWN
+}
+
+enum RepeatLikelihood {
+  YES
+  MAYBE
+  ONLY_IN_SAME_CONTEXT
+  NO
+  UNKNOWN
 }
