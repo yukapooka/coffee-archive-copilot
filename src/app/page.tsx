@@ -1,12 +1,5 @@
 import Link from "next/link";
-import { PrismaClient } from "@prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
-
-const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL!,
-});
-
-const prisma = new PrismaClient({ adapter });
+import { prisma } from "@/lib/prisma";
 
 function getDisplayTitle(entry: {
   beanName: string | null;
@@ -90,10 +83,30 @@ export default async function HomePage({
       createdAt: "desc",
     },
   ],
-  include: {
+  select: {
+    id: true,
+    beanName: true,
+    title: true,
+    drinkLabel: true,
+    cafeName: true,
+    city: true,
+    dateTried: true,
+    originCountry: true,
+    originRegion: true,
+    varietal: true,
+    process: true,
+    servedStyle: true,
+    tastingNotesRaw: true,
+    personalTastingNote: true,
+    whatLingered: true,
     entryCollections: {
-      include: {
-        collection: true,
+      select: {
+        id: true,
+        collection: {
+          select: {
+            name: true,
+          },
+        },
       },
     },
   },
