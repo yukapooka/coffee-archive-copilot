@@ -98,6 +98,7 @@ export default async function HomePage({
     },
   },
 });
+  const totalEntries = await prisma.entry.count();
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-10">
@@ -107,6 +108,11 @@ export default async function HomePage({
             Coffee Archive Copilot
           </p>
           <h1 className="text-4xl font-semibold">Archive</h1>
+          <p className="mt-2 text-sm text-gray-500">
+            {entries.length === totalEntries
+              ? `${totalEntries} archive cards`
+              : `Showing ${entries.length} of ${totalEntries} archive cards`}
+          </p>
         </div>
 
         <Link
