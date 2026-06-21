@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { revalidatePath } from "next/cache";
 import { notFound, redirect } from "next/navigation";
+import { SubmitButton } from "@/components/SubmitButton";
 import { prisma } from "@/lib/prisma";
 
 function textValue(value: string | null) {
@@ -33,98 +35,101 @@ function nullableInt(value: FormDataEntryValue | null) {
 async function updateEntry(id: string, formData: FormData) {
   "use server";
 
-  await prisma.entry.update({
-    where: { id },
-    data: {
-      beanName: (formData.get("beanName") as string) || null,
-      drinkLabel: (formData.get("drinkLabel") as string) || null,
-      cafeName: (formData.get("cafeName") as string) || null,
-      roasterName: (formData.get("roasterName") as string) || null,
-      city: (formData.get("city") as string) || null,
-      countryWhereDrank:
-        (formData.get("countryWhereDrank") as string) || null,
-      dateTried: formData.get("dateTried")
-        ? new Date(formData.get("dateTried") as string)
-        : null,
-      originCountry: (formData.get("originCountry") as string) || null,
-      originRegion: (formData.get("originRegion") as string) || null,
-      producer: (formData.get("producer") as string) || null,
-      farm: (formData.get("farm") as string) || null,
-      varietal: (formData.get("varietal") as string) || null,
-      process: (formData.get("process") as string) || null,
-      servedStyle:
-        ((formData.get("servedStyle") as string) || null) as
-          | "HOT"
-          | "ICED"
-          | "BOTH"
-          | null,
-      tastingNotesRaw:
-        (formData.get("tastingNotesRaw") as string) || null,
-      personalTastingNote:
-        (formData.get("personalTastingNote") as string) || null,
-      whatLingered: (formData.get("whatLingered") as string) || null,
-      roomNote: (formData.get("roomNote") as string) || null,
-      memoryNote: (formData.get("MemoryNote") as string) || null,
-      curationNote: (formData.get("curationNote") as string) || null,
-      memoryTrip: formData.get("memoryTrip") === "on",
-      turningPoint: formData.get("turningPoint") === "on",
-      quietFavorite: formData.get("quietFavorite") === "on",
-      wouldRevisit: formData.get("wouldRevisit") === "on",
-    },
-  });
+  const selectedCollectionIds = formData.getAll("collectionIds") as string[];
 
-  await prisma.entryInterpretation.upsert({
-    where: {
-      entryId: id,
-    },
-    update: {
-      occasion: nullableEnum(formData.get("occasion")),
-      selectionSource: nullableEnum(formData.get("selectionSource")),
-      selectionIntent: nullableEnum(formData.get("selectionIntent")),
-      moodBefore: nullableEnum(formData.get("moodBefore")),
-      energyBefore: nullableEnum(formData.get("energyBefore")),
-      energyAfter: nullableEnum(formData.get("energyAfter")),
-      momentFitRating: nullableInt(formData.get("momentFitRating")),
-      repeatLikelihood: nullableEnum(formData.get("repeatLikelihood")),
-      interpretationNote: nullableString(formData.get("interpretationNote")),
-    },
-    create: {
-      entryId: id,
-      occasion: nullableEnum(formData.get("occasion")),
-      selectionSource: nullableEnum(formData.get("selectionSource")),
-      selectionIntent: nullableEnum(formData.get("selectionIntent")),
-      moodBefore: nullableEnum(formData.get("moodBefore")),
-      energyBefore: nullableEnum(formData.get("energyBefore")),
-      energyAfter: nullableEnum(formData.get("energyAfter")),
-      momentFitRating: nullableInt(formData.get("momentFitRating")),
-      repeatLikelihood: nullableEnum(formData.get("repeatLikelihood")),
-      interpretationNote: nullableString(formData.get("interpretationNote")),
-      memoryNote: nullableString(formData.get("interpretationMemoryNote")),
-      lingeringNote: nullableString(formData.get("lingeringNote")),
-    },
-  });
+  await prisma.$transaction(async (tx) => {
+    await tx.entry.update({
+      where: { id },
+      data: {
+        beanName: (formData.get("beanName") as string) || null,
+        drinkLabel: (formData.get("drinkLabel") as string) || null,
+        cafeName: (formData.get("cafeName") as string) || null,
+        roasterName: (formData.get("roasterName") as string) || null,
+        city: (formData.get("city") as string) || null,
+        countryWhereDrank:
+          (formData.get("countryWhereDrank") as string) || null,
+        dateTried: formData.get("dateTried")
+          ? new Date(formData.get("dateTried") as string)
+          : null,
+        originCountry: (formData.get("originCountry") as string) || null,
+        originRegion: (formData.get("originRegion") as string) || null,
+        producer: (formData.get("producer") as string) || null,
+        farm: (formData.get("farm") as string) || null,
+        varietal: (formData.get("varietal") as string) || null,
+        process: (formData.get("process") as string) || null,
+        servedStyle:
+          ((formData.get("servedStyle") as string) || null) as
+            | "HOT"
+            | "ICED"
+            | "BOTH"
+            | null,
+        tastingNotesRaw:
+          (formData.get("tastingNotesRaw") as string) || null,
+        personalTastingNote:
+          (formData.get("personalTastingNote") as string) || null,
+        whatLingered: (formData.get("whatLingered") as string) || null,
+        roomNote: (formData.get("roomNote") as string) || null,
+        memoryNote: (formData.get("MemoryNote") as string) || null,
+        curationNote: (formData.get("curationNote") as string) || null,
+        memoryTrip: formData.get("memoryTrip") === "on",
+        turningPoint: formData.get("turningPoint") === "on",
+        quietFavorite: formData.get("quietFavorite") === "on",
+        wouldRevisit: formData.get("wouldRevisit") === "on",
+      },
+    });
 
-    const selectedCollectionIds =
-    formData.getAll("collectionIds") as string[];
-
-    await prisma.entryCollection.deleteMany({
-        where: {
+    await tx.entryInterpretation.upsert({
+      where: {
         entryId: id,
-        },
+      },
+      update: {
+        occasion: nullableEnum(formData.get("occasion")),
+        selectionSource: nullableEnum(formData.get("selectionSource")),
+        selectionIntent: nullableEnum(formData.get("selectionIntent")),
+        moodBefore: nullableEnum(formData.get("moodBefore")),
+        energyBefore: nullableEnum(formData.get("energyBefore")),
+        energyAfter: nullableEnum(formData.get("energyAfter")),
+        momentFitRating: nullableInt(formData.get("momentFitRating")),
+        repeatLikelihood: nullableEnum(formData.get("repeatLikelihood")),
+        interpretationNote: nullableString(formData.get("interpretationNote")),
+      },
+      create: {
+        entryId: id,
+        occasion: nullableEnum(formData.get("occasion")),
+        selectionSource: nullableEnum(formData.get("selectionSource")),
+        selectionIntent: nullableEnum(formData.get("selectionIntent")),
+        moodBefore: nullableEnum(formData.get("moodBefore")),
+        energyBefore: nullableEnum(formData.get("energyBefore")),
+        energyAfter: nullableEnum(formData.get("energyAfter")),
+        momentFitRating: nullableInt(formData.get("momentFitRating")),
+        repeatLikelihood: nullableEnum(formData.get("repeatLikelihood")),
+        interpretationNote: nullableString(formData.get("interpretationNote")),
+        memoryNote: nullableString(formData.get("interpretationMemoryNote")),
+        lingeringNote: nullableString(formData.get("lingeringNote")),
+      },
+    });
+
+    await tx.entryCollection.deleteMany({
+      where: {
+        entryId: id,
+      },
     });
 
     if (selectedCollectionIds.length > 0) {
-        await prisma.entryCollection.createMany({
+      await tx.entryCollection.createMany({
         data: selectedCollectionIds.map((collectionId) => ({
-            entryId: id,
-            collectionId,
+          entryId: id,
+          collectionId,
         })),
         skipDuplicates: true,
-        });
+      });
     }
-    redirect(`/entries/${id}`);
-    }
+  });
 
+  revalidatePath("/");
+  revalidatePath(`/entries/${id}`);
+  redirect(`/entries/${id}`);
+}
 
 export default async function EditEntryPage({
   params,
@@ -132,24 +137,25 @@ export default async function EditEntryPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  
-  const entry = await prisma.entry.findUnique({
-    where: { id },
-    include: {
-      interpretation: true,
-      entryCollections: {
-        include: {
-          collection: true,
+
+  const [entry, collections] = await Promise.all([
+    prisma.entry.findUnique({
+      where: { id },
+      include: {
+        interpretation: true,
+        entryCollections: {
+          include: {
+            collection: true,
+          },
         },
       },
-    },
-  });
-
-  const collections = await prisma.collection.findMany({
-    orderBy: {
-      name: "asc",
-    },
-  });
+    }),
+    prisma.collection.findMany({
+      orderBy: {
+        name: "asc",
+      },
+    }),
+  ]);
 
   if (!entry) {
     notFound();
@@ -618,12 +624,9 @@ export default async function EditEntryPage({
         </section>
 
         <div className="flex gap-3">
-          <button
-            type="submit"
-            className="rounded bg-black px-5 py-3 text-sm font-medium text-white"
-          >
+          <SubmitButton className="rounded bg-black px-5 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-gray-300">
             Save Changes
-          </button>
+          </SubmitButton>
 
           <Link
             href={`/entries/${entry.id}`}

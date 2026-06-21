@@ -1,4 +1,6 @@
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { SubmitButton } from "@/components/SubmitButton";
 import { prisma } from "@/lib/prisma";
 
 async function createEntry(formData: FormData) {
@@ -31,6 +33,7 @@ async function createEntry(formData: FormData) {
     },
   });
 
+  revalidatePath("/");
   redirect(`/entries/${entry.id}`);
 }
 
@@ -80,9 +83,7 @@ export default function NewEntryPage() {
         <textarea name="roomNote" placeholder="Room note" className="w-full rounded border p-3" />
         <textarea name="memoryNote" placeholder="Memory note" className="w-full rounded border p-3" />
 
-        <button className="rounded bg-black px-4 py-2 text-white">
-          Save entry
-        </button>
+        <SubmitButton>Save entry</SubmitButton>
       </form>
     </main>
   );

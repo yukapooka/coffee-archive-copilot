@@ -36,94 +36,101 @@ export default async function HomePage({
   const originCountry = params.originCountry || "";
   const process = params.process || "";
   const collectionId = params.collectionId || "";
-  const collections = await prisma.collection.findMany({
-    orderBy: {
-      name: "asc",
-    },
-  });
-  const entries = await prisma.entry.findMany({
-  where: {
-    AND: [
-      q
-        ? {
-            OR: [
-              { beanName: { contains: q, mode: "insensitive" } },
-              { cafeName: { contains: q, mode: "insensitive" } },
-              { roasterName: { contains: q, mode: "insensitive" } },
-              { originCountry: { contains: q, mode: "insensitive" } },
-              { originRegion: { contains: q, mode: "insensitive" } },
-              { varietal: { contains: q, mode: "insensitive" } },
-              { process: { contains: q, mode: "insensitive" } },
-              { tastingNotesRaw: { contains: q, mode: "insensitive" } },
-              { personalTastingNote: { contains: q, mode: "insensitive" } },
-              { whatLingered: { contains: q, mode: "insensitive" } },
-            ],
-          }
-        : {},
-      originCountry
-        ? {
-            originCountry: {
-              contains: originCountry,
-              mode: "insensitive",
-            },
-          }
-        : {},
-      process
-        ? {
-            process: {
-              contains: process,
-              mode: "insensitive",
-            },
-          }
-        : {},
-      collectionId
-        ? {
-            entryCollections: {
-              some: {
-                collectionId,
-              },
-            },
-          }
-        : {},
-    ],
-  },
-  orderBy: [
-    {
-      dateTried: "desc",
-    },
-    {
-      createdAt: "desc",
-    },
-  ],
-  select: {
-    id: true,
-    beanName: true,
-    title: true,
-    drinkLabel: true,
-    cafeName: true,
-    city: true,
-    dateTried: true,
-    originCountry: true,
-    originRegion: true,
-    varietal: true,
-    process: true,
-    servedStyle: true,
-    tastingNotesRaw: true,
-    personalTastingNote: true,
-    whatLingered: true,
-    entryCollections: {
+  const [collections, entries, totalEntries] = await Promise.all([
+    prisma.collection.findMany({
+      orderBy: {
+        name: "asc",
+      },
+    }),
+    prisma.entry.findMany({
+      where: {
+        AND: [
+          q
+            ? {
+                OR: [
+                  { beanName: { contains: q, mode: "insensitive" } },
+                  { cafeName: { contains: q, mode: "insensitive" } },
+                  { roasterName: { contains: q, mode: "insensitive" } },
+                  { originCountry: { contains: q, mode: "insensitive" } },
+                  { originRegion: { contains: q, mode: "insensitive" } },
+                  { varietal: { contains: q, mode: "insensitive" } },
+                  { process: { contains: q, mode: "insensitive" } },
+                  { tastingNotesRaw: { contains: q, mode: "insensitive" } },
+                  {
+                    personalTastingNote: {
+                      contains: q,
+                      mode: "insensitive",
+                    },
+                  },
+                  { whatLingered: { contains: q, mode: "insensitive" } },
+                ],
+              }
+            : {},
+          originCountry
+            ? {
+                originCountry: {
+                  contains: originCountry,
+                  mode: "insensitive",
+                },
+              }
+            : {},
+          process
+            ? {
+                process: {
+                  contains: process,
+                  mode: "insensitive",
+                },
+              }
+            : {},
+          collectionId
+            ? {
+                entryCollections: {
+                  some: {
+                    collectionId,
+                  },
+                },
+              }
+            : {},
+        ],
+      },
+      orderBy: [
+        {
+          dateTried: "desc",
+        },
+        {
+          createdAt: "desc",
+        },
+      ],
       select: {
         id: true,
-        collection: {
+        beanName: true,
+        title: true,
+        drinkLabel: true,
+        cafeName: true,
+        city: true,
+        dateTried: true,
+        originCountry: true,
+        originRegion: true,
+        varietal: true,
+        process: true,
+        servedStyle: true,
+        tastingNotesRaw: true,
+        personalTastingNote: true,
+        whatLingered: true,
+        entryCollections: {
           select: {
-            name: true,
+            id: true,
+            collection: {
+              select: {
+                name: true,
+              },
+            },
           },
         },
       },
-    },
-  },
-});
-  const totalEntries = await prisma.entry.count();
+    }),
+    prisma.entry.count(),
+  ]);
   const archiveEntries = entries.map((entry) => ({
     ...entry,
     dateTried: entry.dateTried?.toISOString() ?? null,
