@@ -309,19 +309,35 @@ export default async function EditEntryPage({
           </h2>
 
           <div className="space-y-4">
-            <textarea
-              name="personalTastingNote"
-              defaultValue={textValue(entry.personalTastingNote)}
-              placeholder="Personal tasting note"
-              className="w-full rounded border border-gray-400 p-3 text-gray-900 placeholder:text-gray-600"
-            />
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-gray-700">
+                Opening notes
+              </span>
+              <textarea
+                name="personalTastingNote"
+                defaultValue={textValue(entry.personalTastingNote)}
+                placeholder="Opening notes"
+                className="w-full rounded border border-gray-400 p-3 text-gray-900 placeholder:text-gray-600"
+              />
+              <span className="mt-1 block text-xs text-gray-500">
+                What appeared first?
+              </span>
+            </label>
 
-            <textarea
-              name="whatLingered"
-              defaultValue={textValue(entry.whatLingered)}
-              placeholder="What lingered"
-              className="w-full rounded border border-gray-400 p-3 text-gray-900 placeholder:text-gray-600"
-            />
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-gray-700">
+                What lingered
+              </span>
+              <textarea
+                name="whatLingered"
+                defaultValue={textValue(entry.whatLingered)}
+                placeholder="What lingered"
+                className="w-full rounded border border-gray-400 p-3 text-gray-900 placeholder:text-gray-600"
+              />
+              <span className="mt-1 block text-xs text-gray-500">
+                What stayed after the sip?
+              </span>
+            </label>
 
             <textarea
               name="roomNote"

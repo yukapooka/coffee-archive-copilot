@@ -59,8 +59,24 @@ export default function NewEntryPage() {
         <textarea name="tastingNotesRaw" placeholder="Roaster notes" className="w-full rounded border p-3"/>
         <input name="cafeName" placeholder="Cafe name" className="w-full rounded border p-3" />
         <input name="city" placeholder="City" className="w-full rounded border p-3" />
-        <textarea name="personalTastingNote" placeholder="Personal tasting note" className="w-full rounded border p-3" />
-        <textarea name="whatLingered" placeholder="What lingered" className="w-full rounded border p-3" />
+        <label className="block">
+          <span className="mb-1 block text-sm font-medium text-gray-700">
+            Opening notes
+          </span>
+          <textarea name="personalTastingNote" placeholder="Opening notes" className="w-full rounded border p-3" />
+          <span className="mt-1 block text-xs text-gray-500">
+            What appeared first?
+          </span>
+        </label>
+        <label className="block">
+          <span className="mb-1 block text-sm font-medium text-gray-700">
+            What lingered
+          </span>
+          <textarea name="whatLingered" placeholder="What lingered" className="w-full rounded border p-3" />
+          <span className="mt-1 block text-xs text-gray-500">
+            What stayed after the sip?
+          </span>
+        </label>
         <textarea name="roomNote" placeholder="Room note" className="w-full rounded border p-3" />
         <textarea name="memoryNote" placeholder="Memory note" className="w-full rounded border p-3" />
 

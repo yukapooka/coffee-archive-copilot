@@ -158,7 +158,7 @@ export default async function EntryPage({
         <Section title="Observe">
           <div className="space-y-5">
             <DetailRow
-              label="Personal Tasting Note"
+              label="Opening notes"
               value={entry.personalTastingNote}
             />
             <DetailRow label="What Lingered" value={entry.whatLingered} />

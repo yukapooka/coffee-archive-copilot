@@ -132,14 +132,15 @@ function ArchiveCardContent({
 
         {entry.personalTastingNote && (
           <p className="line-clamp-2">
-            <span className="font-medium">Note:</span>{" "}
+            <span className="font-medium">Opening notes:</span>{" "}
             {entry.personalTastingNote}
           </p>
         )}
 
         {entry.whatLingered && (
           <p className="line-clamp-2">
-            <span className="font-medium">Lingered:</span> {entry.whatLingered}
+            <span className="font-medium">What lingered:</span>{" "}
+            {entry.whatLingered}
           </p>
         )}
       </div>
