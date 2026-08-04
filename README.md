@@ -1,28 +1,54 @@
 # coffee-archive-copilot
 
-AI-assisted archive and perspective engine for coffee experiences.
+A private coffee archive for capturing, organizing, and revisiting coffee experiences.
 
-`coffee-archive-copilot` helps capture coffee experiences as structured archive cards — beans, roaster notes, opening notes, what lingered, cup photos, café context, rituals, and memories — then read across them over time.
+`coffee-archive-copilot` turns scattered coffee notes into structured archive cards. Each entry can hold bean details, roaster notes, opening notes, what lingered, café or place context, collections, and interpretation fields.
 
 The project is based on a simple idea:
 
-> Archive is infrastructure.
-> Interpretation is the product.
+> Archive is infrastructure.  
+> Interpretation is the product.  
 > Learning is the outcome.
 
-The goal is to preserve enough detail around each coffee experience so patterns and perspectives can emerge later.
+Build v1.0 focuses on the archive itself: creating entries, editing them, browsing the archive, searching, filtering, and grouping coffees through collections.
+
+Future builds will add photo upload, AI-assisted tagging, and a Perspective Engine for reading across archive patterns.
+
+---
+
+## Screenshots
+
+### Archive Homepage
+
+![Archive homepage](docs/screenshots/archive-home.png)
+
+Searchable archive homepage with filters, collection chips, and archive card count.
+
+### Entry Detail Page
+
+![Entry detail page](docs/screenshots/entry-detail.png)
+
+Structured entry page for reviewing bean details, tasting notes, context, and collections.
+
+### Edit Entry Page
+
+![Edit entry page](docs/screenshots/edit-entry.png)
+
+Edit form for updating coffee notes, metadata, collections, and interpretation fields.
 
 ---
 
 ## What This App Does
 
-* captures coffee experiences in a structured archive
-* records opening notes, lingering notes, roaster notes, and personal impressions
-* preserves context around cups, places, rituals, and memories
-* organizes entries through collections, flags, and search/filter tools
-* supports photo-based context through future image upload and tagging
-* helps surface perspective fragments from repeated archive patterns
-* supports future Notes on Bean ideas, Archive Notes, Field Notes, and Memory Trips
+* captures coffee experiences as structured archive cards
+* records bean details, roaster notes, opening notes, and what lingered
+* stores café, place, date, process, origin, and variety metadata
+* supports entry creation, editing, and detail views
+* organizes entries through collections
+* displays collection chips on archive cards
+* supports search, filtering, and sorting
+* includes select mode and delete-selected workflow
+* runs as a private deployed web app
 
 ---
 
@@ -33,95 +59,88 @@ A coffee entry is not only a tasting record.
 It can also capture:
 
 * where the coffee was experienced
-* what kind of moment it belonged to
-* what was visually present
-* what activity surrounded it
-* what stayed after the sip
-* how it connects to other cups over time
-* whether it may become part of a larger story or collection
+* what was noticed in the cup
+* what changed from first sip to finish
+* what context surrounded the coffee
+* how the entry connects to other cups over time
 
 The archive exists so interpretation can happen later.
 
-The AI layer is designed as a **Perspective Engine**: a way to read across entries, detect repeated signals, and turn them into grounded perspective fragments.
-
-Example:
-
-> Some coffees are not the subject of attention. They are what makes attention possible.
+The current product is intentionally simple: preserve the coffee experience first, then leave room for patterns to emerge across entries.
 
 ---
 
 ## Core Workflow
 
 ```text
-Capture → Archive → Tag → Pattern → Perspective → Learn
+Capture → Archive → Revisit → Interpret
 ```
 
-**Capture**
+**Capture**  
 Record the coffee experience while it is still fresh.
 
-**Archive**
-Store it as a structured card with notes, metadata, collections, and eventually photos.
+**Archive**  
+Store the entry with structured notes, metadata, and collections.
 
-**Tag**
-Add or generate labels around process, place, activity, visual context, and memory cues.
+**Revisit**  
+Search, filter, and browse entries across time.
 
-**Pattern**
-Read across entries to find repeated signals.
-
-**Perspective**
-Turn patterns into short, evidence-backed reflections.
-
-**Learn**
-Use saved perspectives as Archive Notes, content ideas, hypotheses, or future writing prompts.
+**Interpret**  
+Use the archive to notice repeated patterns, possible themes, and future writing ideas.
 
 ---
 
 ## Current Build Status
 
-### Milestone 1 — Archive Foundation
+### Build v1.0 — Coffee Archive
 
-* Set up Next.js project
-* Set up PostgreSQL
-* Set up Prisma schema
-* Create new entry form
-* Save entry to database
-* View individual entry
-* Edit existing entry
-* Browse archive home
-* Deploy private app on Vercel
-* Add Basic Auth protection
+Status: **Current release**
 
-### Milestone 2 — Archive Workflow
+Build v1.0 is a working private coffee archive.
 
-* Opening notes / what lingered workflow
-* Roaster notes and personal impressions
-* Search / filter / sort
-* Archive card count
-* Collection assignment
-* Collection chips
-* Select mode
-* Delete selected entries
-* Pending / saving state for forms
+Implemented:
 
-### Milestone 3 — Media Layer
+* Next.js app setup
+* PostgreSQL database
+* Prisma schema
+* Prisma 7 with PrismaPg adapter
+* create entry form
+* entry detail page
+* edit entry page
+* archive homepage
+* archive card grid
+* opening notes / what lingered workflow
+* roaster notes and personal impressions
+* search by keyword
+* filters by origin, process, and collection
+* sorting by date tried and creation date
+* collection assignment from edit page
+* collection display on detail page
+* collection chips on archive cards
+* archive card count
+* select mode
+* delete selected entries
+* pending / saving state for forms
+* private Vercel deployment
+* Basic Auth protection
 
-Planned:
+### Build v2.0 — Photo Upload + Tagging
 
-* Upload cup photos
-* Upload place / room photos
-* Select hero image for archive cards
-* Display thumbnails on archive grid
-* Display larger images on entry detail pages
-* Replace or remove photos
+Status: **Planned**
 
-### Milestone 4 — Visual / Activity Tagging
+Build v2.0 will add a media layer and tagging workflow.
 
-Planned:
+Planned scope:
 
-* Add manual activity labels
-* Suggest labels from photos
-* Review and edit suggested labels
-* Use labels to group visually recurring coffee moments
+* upload cup photos
+* upload place / room photos
+* select hero image for archive cards
+* display thumbnails on archive grid
+* display larger images on entry detail pages
+* replace or remove photos
+* add manual visual / activity labels
+* suggest labels from photos
+* review and edit suggested labels
 
 Example labels:
 
@@ -135,15 +154,23 @@ Example labels:
 * solo table
 * memory anchor
 
-### Milestone 5 — Perspective Engine
+### Build v3.0 — Perspective Engine
 
-Planned:
+Status: **Planned**
 
-* Generate perspective fragments from selected entries, collections, or the full archive
-* Use tasting notes, lingering notes, roaster notes, process, origin, collections, and photo labels
-* Show supporting entries for each generated perspective
-* Save, edit, copy, or reject generated fragments
-* Promote useful fragments into Archive Notes or hypotheses
+Build v3.0 will add an interpretation layer on top of the archive.
+
+Planned scope:
+
+* generate perspective fragments from selected entries, collections, or the full archive
+* use tasting notes, lingering notes, roaster notes, process, origin, collections, and photo labels
+* show supporting entries for each generated perspective
+* save, edit, copy, or reject generated fragments
+* promote useful fragments into Archive Notes or hypotheses
+
+Example perspective fragment:
+
+> Some coffees are not the subject of attention. They are what makes attention possible.
 
 ---
 
@@ -154,11 +181,9 @@ Planned:
 * Hong Kong Cups
 * Taipei Cups
 * Taichung Cups
-* Quiet Favorites
 * Rainy Afternoon Coffees
 * Sunny Afternoon Coffees
 * Processing × Mood
-* Coffee & Place
 
 ---
 
@@ -179,18 +204,18 @@ Planned:
 
 * Vercel Blob or equivalent object storage
 * OpenAI API or equivalent LLM / vision model provider
-* structured AI outputs for tags and perspective fragments
-* future data models for media, photo labels, saved insights, and archive hypotheses
+* structured AI outputs for photo tags and perspective fragments
 
 ---
 
 ## MVP Scope
 
-Current MVP:
+Current MVP (v1.0 release):
 
-* responsive private web app
+* private responsive web app
 * archive CRUD
 * entry detail pages
+* edit entry pages
 * archive card grid
 * opening notes
 * what lingered
@@ -200,14 +225,14 @@ Current MVP:
 * search / filter / sort
 * archive card count
 * safe delete workflow
-* mobile-friendly editing
+* mobile-friendly browsing and editing
 * deployed private access
 
-Next MVP expansion:
+Next builds:
 
 * photo upload
 * photo display on archive cards and detail pages
-* manual visual / activity labels
+* visual / activity labels
 * AI-assisted photo tagging
 * Perspective Engine prototype
 * save / edit / reject perspective fragments
@@ -220,14 +245,10 @@ The long-term goal is to turn scattered coffee experiences into a creative archi
 
 * What cups do I remember most?
 * Which coffees stay as flavor, and which stay as place?
-* What roles does coffee keep playing in my life?
-* Which coffees belong to reading, writing, walking, travel, or art?
-* Which entries are Bean Notes, Field Notes, Memory Trips, or Archive Note seeds?
-* What visual rituals recur across the archive?
-* What perspectives keep emerging from the way I drink and remember coffee?
-* How has my taste changed over time?
+* What patterns appear across process, origin, mood, and context?
+* Which entries could become Bean Notes, Field Notes, Memory Trips, or Archive Notes?
 * What archive fragments could become Notes on Bean posts?
 
-The ultimate output is not a coffee database.
+Build v1.0 proves the archive foundation.
 
-It is a richer understanding of coffee as taste, memory, place, ritual, attention, and creative practice.
+Future builds can add richer media, tagging, and interpretation layers on top of it.
