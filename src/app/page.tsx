@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { ArchiveGridClient } from "@/components/ArchiveGridClient";
+import { requireBasicAuth } from "@/lib/basic-auth";
 import { prisma } from "@/lib/prisma";
 
 async function deleteSelectedEntries(entryIds: string[]) {
   "use server";
+
+  await requireBasicAuth();
 
   const selectedIds = Array.from(new Set(entryIds.filter(Boolean)));
 

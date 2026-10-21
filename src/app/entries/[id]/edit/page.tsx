@@ -2,6 +2,7 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 import { SubmitButton } from "@/components/SubmitButton";
+import { requireBasicAuth } from "@/lib/basic-auth";
 import { prisma } from "@/lib/prisma";
 
 function textValue(value: string | null) {
@@ -34,6 +35,8 @@ function nullableInt(value: FormDataEntryValue | null) {
 
 async function updateEntry(id: string, formData: FormData) {
   "use server";
+
+  await requireBasicAuth();
 
   const selectedCollectionIds = formData.getAll("collectionIds") as string[];
 
