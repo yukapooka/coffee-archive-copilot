@@ -72,7 +72,7 @@ async function updateEntry(id: string, formData: FormData) {
           (formData.get("personalTastingNote") as string) || null,
         whatLingered: (formData.get("whatLingered") as string) || null,
         roomNote: (formData.get("roomNote") as string) || null,
-        memoryNote: (formData.get("MemoryNote") as string) || null,
+        memoryNote: (formData.get("memoryNote") as string) || null,
         curationNote: (formData.get("curationNote") as string) || null,
         memoryTrip: formData.get("memoryTrip") === "on",
         turningPoint: formData.get("turningPoint") === "on",
@@ -107,7 +107,6 @@ async function updateEntry(id: string, formData: FormData) {
         momentFitRating: nullableInt(formData.get("momentFitRating")),
         repeatLikelihood: nullableEnum(formData.get("repeatLikelihood")),
         interpretationNote: nullableString(formData.get("interpretationNote")),
-        memoryNote: nullableString(formData.get("interpretationMemoryNote")),
         lingeringNote: nullableString(formData.get("lingeringNote")),
       },
     });
@@ -356,7 +355,7 @@ export default async function EditEntryPage({
             />
 
             <textarea
-              name="interpretationMemoryNote"
+              name="memoryNote"
               defaultValue={textValue(entry.memoryNote)}
               placeholder="Memory note"
               className="w-full rounded border border-gray-400 p-3 text-gray-900 placeholder:text-gray-600"
