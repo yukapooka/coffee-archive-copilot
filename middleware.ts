@@ -60,7 +60,8 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/((?!_next|favicon\\.ico|.*\\.(?:png|jpg|jpeg|svg|ico|css|js)$).*)",
-  ],
+  // Exclude only Next.js build assets and the favicon. Excluding by file
+  // extension would also skip auth for app routes (and their Server Actions)
+  // whose URL happens to end in .png, .js, etc.
+  matcher: ["/((?!_next/static|_next/image|favicon\\.ico$).*)"],
 };
